@@ -1,0 +1,5 @@
+﻿  class.cpp
+C:\Users\Naviko\Desktop\prog2\class\class.cpp(30,1): warning C4624: "square": деструктор неявно определен как удаленный
+C:\Users\Naviko\Desktop\prog2\class\class.cpp(43,1): warning C4624: "circle": деструктор неявно определен как удаленный
+C:\Users\Naviko\Desktop\prog2\class\class.cpp(56,1): warning C4624: "triangle": деструктор неявно определен как удаленный
+  class.vcxproj -> C:\Users\Naviko\Desktop\prog2\class\x64\Debug\class.exe
