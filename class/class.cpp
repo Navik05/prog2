@@ -1,13 +1,18 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS
 #define N 3
 #include <iostream>
+#include <conio.h>
 
 class figure
 {
+protected:
     float area;
     float perimeter;
     figure();
     ~figure();
+public:
+    float get_area();
+    float get_perimeter();
 };
 //Конструктор
 figure::figure()
@@ -20,94 +25,202 @@ figure::~figure()
 {
 
 }
+//Вывод площади
+float figure::get_area()
+{
+    return area;
+}
+//Вывод периметра
+float figure::get_perimeter()
+{
+    return perimeter;
+}
+
 //<---квадрат--->
-class square :public figure
+class square : public figure
 {
     float a;
     float diagonal;
 public:
     void set_a(float e);
+    void work_square();
+    float get_diagonal();
 };
 //Ввод стороны
 void square::set_a(float e)
 {
     a = e;
 }
+//Обработка данных
+void square::work_square()
+{
+    diagonal = sqrtf(2) * a;
+    area = powf(a, 2);
+    perimeter = a * 4;
+}
+//Вывод диагонали
+float square::get_diagonal()
+{
+    return diagonal;
+}
+
 //<---круг--->
-class circle :public figure
+class circle : public figure
 {
     float r;
     float d;
 public:
     void set_r(float e);
+    void work_circle();
+    float get_d();
 };
 //Ввод радиуса
 void circle::set_r(float e)
 {
     r = e;
 }
+//Обработка данных
+void circle::work_circle()
+{
+    d = r * 2;
+    area = 3.14 * pow(r, 2);
+    perimeter = 3.14 * 2 * r;
+}
+//Вывод диаметра
+float circle::get_d()
+{
+    return d;
+}
+
 //<---треугольник--->
-class triangle :public figure
+class triangle : public figure
 {
     float sides[N];
     int view;
 public:
-    void set_sides(float e[]);
+    void set_sides(float t[]);
+    void work_triangle();
+    int get_view();
 };
 //Ввод сторон
-void triangle::set_sides(float e[])
+void triangle::set_sides(float t[])
 {
     for (int i = 0; i < N; i++)
-        sides[i] = e[i];
+        sides[i] = t[i];
 }
-
-
+//Обработка данных
+void triangle::work_triangle()
+{
+    float p2;
+    perimeter = sides[0] + sides[1] + sides[2];
+    p2 = perimeter / 2;
+    area = sqrtf(p2 * (p2 - sides[0]) * (p2 - sides[1]) * (p2 - sides[2]));
+    if (sides[0] == sides[1] && sides[1] == sides[2])
+        view = 1;
+    else if (sides[0] == sides[1] || sides[1] == sides[2])
+        view = 2;
+    else view = 3;
+}
+//Вывод вида треугольника
+int triangle::get_view()
+{
+    return view;
+}
 
 int block_int(int min, int max);
 float block_float();
-//void input(int type, float sides[]);
-//void work();
-//void output();
 
 int main()
 {
-    int type, min, max, i;
-    float e[N];
-    square* one;
-    circle* two;
-    triangle* three;
+    int type, min, max, i,j;
+    float e, t[N],p,s;
+    square* one = NULL;
+    circle* two = NULL;
+    triangle* three = NULL;
     setlocale(LC_ALL, "Rus");
-    printf("\n1-квадрат\n2-круг\n3-треугольник\nВыберите фигуру:");
-    min = 1; max = 3;
-    type = block_int(min, max);
-    switch (type)
-    {
-    case 1:
-        printf("Длина стороны квадрата:");
-        one = (square*)malloc(sizeof(square));
-        e[0] = block_float();
-        one->set_a(e[0]);
-        break;
-    case 2:
-        printf("Радиус круга:");
-        two = (circle*)malloc(sizeof(circle));
-        e[0] = block_float();
-        two->set_r(e[0]);
-        break;
-    case 3:
-        printf("Длина сторон треугольника:");
-        three = (triangle*)malloc(sizeof(triangle));
-        for (i = 0; i < 3; i++)
+    one = (square*)calloc(N, sizeof(square));
+    two = (circle*)calloc(N, sizeof(circle));
+    three = (triangle*)calloc(N, sizeof(triangle));
+    j = 0;
+    //Полный цикл программы
+    do {
+        printf("\n1-квадрат\n2-круг\n3-треугольник\nВыберите фигуру:");
+        min = 1; max = 3;
+        type = block_int(min, max);
+        //Ввод и обработка
+        switch (type)
         {
-            e[i] = block_float();
+        case 1:
+            printf("Длина стороны квадрата:");
+            e = block_float();
+            (one + j)->set_a(e);
+            (one + j)->work_square();
+            break;
+        case 2:
+            printf("Радиус круга:");
+            e = block_float();
+            two->set_r(e);
+            two->work_circle();
+            break;
+        case 3:
+            printf("Длина сторон треугольника:");
+            for (i = 0; i < 3; i++)
+            {
+                t[i] = block_float();
+            }
+            three->set_sides(t);
+            three->work_triangle();
+            break;
+        default:;
         }
-        three->set_sides(e);
-        break;
-    default:;
-    }
-    type = 1;
-    //work();
-    //output();
+        //Вывод
+        printf("Фигура: ");
+
+        switch (type)
+        {
+        case 1:
+            printf("квадрат");
+            e = (one + j)->get_diagonal();
+            printf("\nДиагональ: %f", e);
+            s = (one + j)->get_area();
+            p = (one + j)->get_perimeter();
+            j++;
+            break;
+        case 2:
+            printf("круг");
+            e = two->get_d();
+            printf("\nДиаметр: %f", e);
+            s = two->get_area();
+            p = two->get_perimeter();
+            break;
+        case 3:
+            i = three->get_view();
+            switch (i)
+            {
+            case 1:
+                printf("равносторонний ");
+                break;
+            case 2:
+                printf("равнобедренный ");
+                break;
+            case 3:
+                printf("разносторонний ");
+                break;
+            default:;
+            }
+            printf("треугольник");
+            s = three->get_area();
+            p = three->get_perimeter();
+            break;
+        default:;
+        }
+        printf("\nПлощадь: %f", s);
+        printf("\nПериметр: %f\n", p);
+        printf("\nНажмите ESC для выхода или любую клавишу для продолжения\n");
+    } while (j < N && _getch() != 27);
+    delete one;
+    delete two;
+    delete three;
 }
 //Защита на целые числа
 int block_int(int min, int max)
@@ -150,194 +263,3 @@ float block_float()
     printf("\n");
     return e;
 }
-//Ввод в структуру
-//void input(int type, float sides[])
-//{
-//    int i = 0;
-//    if (g == 0)
-//    {
-//        example.type = type;
-//        switch (type)
-//        {
-//        case 1:
-//            example.figure.square.a = sides[i];
-//            break;
-//        case 2:
-//            example.figure.circle.r = sides[i];
-//            break;
-//        case 3:
-//            for (; i < 3; i++)
-//            {
-//                example.figure.triangle.sides[i] = sides[i];
-//            }
-//            break;
-//        default:;
-//        }
-//    }
-//    else
-//    {
-//        (*second).type = type;
-//        switch (type)
-//        {
-//        case 1:
-//            (*second).figure.square.a = sides[i];
-//            break;
-//        case 2:
-//            (*second).figure.circle.r = sides[i];
-//            break;
-//        case 3:
-//            for (; i < 3; i++)
-//            {
-//                (*second).figure.triangle.sides[i] = sides[i];
-//            }
-//            break;
-//        default:;
-//        }
-//    }
-//}
-//Обработка данных
-//void work()
-//{
-//    float s, p, a[N], p2;
-//    if (g == 0)
-//    {
-//        switch (example.type)
-//        {
-//        case 1:
-//            a[0] = example.figure.square.a;
-//            example.figure.square.diagonal = sqrtf(2) * a[0];
-//            s = powf(a[0], 2);
-//            p = a[0] * 4;
-//            break;
-//        case 2:
-//            a[0] = example.figure.circle.r;
-//            example.figure.circle.d = a[0] * 2;
-//            s = 3.14 * pow(a[0], 2);
-//            p = 3.14 * 2 * a[0];
-//            break;
-//        case 3:
-//            for (int i = 0; i < 3; i++)
-//            {
-//                a[i] = example.figure.triangle.sides[i];
-//            }
-//            p = a[0] + a[1] + a[2];
-//            p2 = p / 2;
-//            s = sqrtf(p2 * (p2 - a[0]) * (p2 - a[1]) * (p2 - a[2]));
-//            if (a[0] == a[1] && a[1] == a[2])
-//                example.figure.triangle.view = 1;
-//            else if (a[0] == a[1] || a[1] == a[2])
-//                example.figure.triangle.view = 2;
-//            else example.figure.triangle.view = 3;
-//            break;
-//        default:;
-//        }
-//        example.area = s;
-//        example.perimeter = p;
-//    }
-//    else
-//    {
-//        switch ((*second).type)
-//        {
-//        case 1:
-//            a[0] = (*second).figure.square.a;
-//            (*second).figure.square.diagonal = sqrtf(2) * a[0];
-//            s = powf(a[0], 2);
-//            p = a[0] * 4;
-//            break;
-//        case 2:
-//            a[0] = (*second).figure.circle.r;
-//            (*second).figure.circle.d = a[0] * 2;
-//            s = 3.14 * pow(a[0], 2);
-//            p = 3.14 * 2 * a[0];
-//            break;
-//        case 3:
-//            for (int i = 0; i < 3; i++)
-//            {
-//                a[i] = (*second).figure.triangle.sides[i];
-//            }
-//            p = a[0] + a[1] + a[2];
-//            p2 = p / 2;
-//            s = sqrtf(p2 * (p2 - a[0]) * (p2 - a[1]) * (p2 - a[2]));
-//            if (a[0] == a[1] && a[1] == a[2])
-//                (*second).figure.triangle.view = 1;
-//            else if (a[0] == a[1] || a[1] == a[2])
-//                (*second).figure.triangle.view = 2;
-//            else (*second).figure.triangle.view = 3;
-//            break;
-//        default:;
-//        }
-//        (*second).area = s;
-//        (*second).perimeter = p;
-//    }
-//}
-////Вывод структуры
-//void output()
-//{
-//    printf("Фигура: ");
-//    if (g == 0)
-//    {
-//        switch (example.type)
-//        {
-//        case 1:
-//            printf("квадрат");
-//            printf("\nДиагональ: %f", example.figure.square.diagonal);
-//            break;
-//        case 2:
-//            printf("круг");
-//            printf("\nДиаметр: %f", example.figure.circle.d);
-//            break;
-//        case 3:
-//            switch (example.figure.triangle.view)
-//            {
-//            case 1:
-//                printf("равносторонний ");
-//                break;
-//            case 2:
-//                printf("равнобедренный ");
-//                break;
-//            case 3:
-//                printf("разносторонний ");
-//                break;
-//            default:;
-//            }
-//            printf("треугольник");
-//            break;
-//        default:;
-//        }
-//        printf("\nПлощадь: %f", example.area);
-//        printf("\nПериметр: %f\n", example.perimeter);
-//    }
-//    else
-//    {
-//        switch ((*second).type)
-//        {
-//        case 1:
-//            printf("квадрат");
-//            printf("\nДиагональ: %f", (*second).figure.square.diagonal);
-//            break;
-//        case 2:
-//            printf("круг");
-//            printf("\nДиаметр: %f", (*second).figure.circle.d);
-//            break;
-//        case 3:
-//            switch ((*second).figure.triangle.view)
-//            {
-//            case 1:
-//                printf("равносторонний ");
-//                break;
-//            case 2:
-//                printf("равнобедренный ");
-//                break;
-//            case 3:
-//                printf("разносторонний ");
-//                break;
-//            default:;
-//            }
-//            printf("треугольник");
-//            break;
-//        default:;
-//        }
-//        printf("\nПлощадь: %f", (*second).area);
-//        printf("\nПериметр: %f\n", (*second).perimeter);
-//    }
-//}
